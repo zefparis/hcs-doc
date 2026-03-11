@@ -5,6 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HCS-U7 — Domain Protection</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script>
+  function setLang(lang) {
+    document.body.className = 'lang-' + lang;
+    document.querySelectorAll('.lang-btn').forEach(function(btn) { btn.classList.remove('active'); });
+    document.querySelectorAll('.lang-btn').forEach(function(btn) {
+      if (btn.getAttribute('data-lang') === lang) btn.classList.add('active');
+    });
+  }
+</script>
 <style>
   :root {
     --cyan: #00C2FF; --dark: #050C14; --dark2: #0A1628; --dark3: #0F2040;
@@ -137,6 +146,41 @@
   .d4{animation-delay:0.4s} .d5{animation-delay:0.5s} .d6{animation-delay:0.6s}
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
 
+  /* 3 ACTORS GRID */
+  .actors-grid {
+    display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
+    gap: 0; align-items: center; margin-bottom: 48px;
+  }
+  @media (max-width: 640px) {
+    .actors-grid { grid-template-columns: 1fr; }
+    .actor-arrow { transform: rotate(90deg); text-align: center; padding: 8px 0; }
+  }
+  .actor-card {
+    background: var(--dark2); border: 1px solid rgba(255,255,255,0.08);
+    padding: 24px 20px; text-align: center;
+  }
+  .actor-card.actor-b2b { border-color: rgba(0,194,255,0.3); border-top: 2px solid var(--cyan); }
+  .actor-card.actor-ia { border-top: 2px solid var(--green); }
+  .actor-card.actor-end { border-top: 2px solid var(--muted); }
+  .actor-icon { font-size: 28px; margin-bottom: 12px; }
+  .actor-card h4 { font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+  .actor-card p { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 12px; }
+  .actor-role {
+    font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 1px;
+    color: var(--cyan); display: block;
+  }
+  .actor-arrow { font-size: 24px; color: var(--muted); padding: 0 12px; text-align: center; }
+
+  /* ACTOR BADGES ON STEPS */
+  .actor-badge {
+    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 1px;
+    color: var(--cyan); background: rgba(0,194,255,0.08);
+    border: 1px solid rgba(0,194,255,0.2); display: inline-block;
+    padding: 3px 10px; margin-bottom: 10px;
+  }
+  .actor-badge.end { color: var(--muted); background: rgba(90,122,154,0.1); border-color: rgba(90,122,154,0.2); }
+  .actor-badge.ia { color: var(--green); background: rgba(0,229,160,0.08); border-color: rgba(0,229,160,0.2); }
+
   /* LANG VISIBILITY */
   .lang-en [data-fr], .lang-fr [data-en] { display: none; }
 </style>
@@ -145,8 +189,8 @@
 
 <!-- LANGUAGE SWITCHER -->
 <div class="lang-switcher">
-  <button class="lang-btn active" onclick="setLang('en')">EN</button>
-  <button class="lang-btn" onclick="setLang('fr')">FR</button>
+  <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>
 </div>
 
 <div class="container">
@@ -172,10 +216,47 @@
     </div>
   </div>
 
-  <!-- STEPS -->
+  <!-- 3 ACTORS -->
   <div class="animate d3">
-    <div class="section-label" data-en>How HCS-U7 Protects a Domain</div>
-    <div class="section-label" data-fr>Comment HCS-U7 Protège un Domaine</div>
+    <div class="section-label" data-en>3 Actors — Understanding the Model</div>
+    <div class="section-label" data-fr>3 Acteurs — Comprendre le Modèle</div>
+    <div class="actors-grid">
+      <div class="actor-card actor-ia">
+        <div class="actor-icon">🏢</div>
+        <h4 data-en>IA-SOLUTION</h4>
+        <h4 data-fr>IA-SOLUTION</h4>
+        <p data-en>Provides the HCS-U7 technology. Manages the infrastructure, the AI, and the cryptographic engine.</p>
+        <p data-fr>Fournit la technologie HCS-U7. Gère l'infrastructure, l'IA et le moteur cryptographique.</p>
+        <span class="actor-role" data-en>TECHNOLOGY PROVIDER</span>
+        <span class="actor-role" data-fr>FOURNISSEUR TECHNOLOGIE</span>
+      </div>
+      <div class="actor-arrow">→</div>
+      <div class="actor-card actor-b2b">
+        <div class="actor-icon">🏦</div>
+        <h4 data-en>Your B2B Client</h4>
+        <h4 data-fr>Votre Client B2B</h4>
+        <p data-en>A bank, fintech, or any company that wants to protect their domain. They integrate HCS-U7 once — that's it.</p>
+        <p data-fr>Une banque, fintech ou toute entreprise souhaitant protéger son domaine. Ils intègrent HCS-U7 une fois — c'est tout.</p>
+        <span class="actor-role" data-en>DOMAIN OWNER · PAYS THE LICENSE</span>
+        <span class="actor-role" data-fr>PROPRIÉTAIRE DU DOMAINE · PAIE LA LICENCE</span>
+      </div>
+      <div class="actor-arrow">→</div>
+      <div class="actor-card actor-end">
+        <div class="actor-icon">👤</div>
+        <h4 data-en>End Users</h4>
+        <h4 data-fr>Utilisateurs Finaux</h4>
+        <p data-en>Customers of the B2B client. In most cases they see nothing — the widget analyses silently. A cognitive check is only triggered if suspicion is detected.</p>
+        <p data-fr>Les clients du client B2B. Dans la plupart des cas ils ne voient rien — le widget analyse en silence. Un test cognitif n'est déclenché qu'en cas de suspicion détectée.</p>
+        <span class="actor-role" data-en>TRANSPARENT EXPERIENCE</span>
+        <span class="actor-role" data-fr>EXPÉRIENCE TRANSPARENTE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="animate d3" style="margin-top:48px">
+    <div class="section-label" data-en>How It Works — Step by Step</div>
+    <div class="section-label" data-fr>Comment Ça Fonctionne — Étape par Étape</div>
   </div>
 
   <div class="steps animate d3">
@@ -183,21 +264,25 @@
     <div class="step">
       <div class="step-num">1</div>
       <div class="step-content">
-        <h3 data-en>🌐 Your Client Gets Their Own Secured Subdomain</h3>
-        <h3 data-fr>🌐 Votre Client Obtient Son Propre Sous-Domaine Sécurisé</h3>
-        <p data-en>Each client is onboarded with a dedicated subdomain — <strong>secure.theirclient.com</strong>. All sensitive interactions (login, payment, identity check) go through this protected entry point. Nothing runs on a shared address.</p>
-        <p data-fr>Chaque client est intégré avec un sous-domaine dédié — <strong>secure.leurclient.com</strong>. Toutes les interactions sensibles (connexion, paiement, vérification d'identité) passent par ce point d'entrée protégé. Rien ne tourne sur une adresse partagée.</p>
-        <span class="tag">ISOLÉ · DÉDIÉ · BRANDÉ</span>
+        <div class="actor-badge" data-en>🏦 B2B CLIENT ACTION</div>
+        <div class="actor-badge" data-fr>🏦 ACTION CLIENT B2B</div>
+        <h3 data-en>🌐 The B2B Client Activates Their Protected Subdomain</h3>
+        <h3 data-fr>🌐 Le Client B2B Active Son Sous-Domaine Protégé</h3>
+        <p data-en>The company subscribes to HCS-U7 and gets a dedicated subdomain — <strong>secure.theircompany.com</strong>. They add a DNS record and embed a widget on their site. One-time setup, under 30 minutes. Their users don't do anything — it's transparent.</p>
+        <p data-fr>L'entreprise souscrit à HCS-U7 et obtient un sous-domaine dédié — <strong>secure.leurentreprise.com</strong>. Elle ajoute un enregistrement DNS et intègre un widget sur son site. Configuration unique, moins de 30 minutes. Ses utilisateurs ne font rien — c'est transparent.</p>
+        <span class="tag">SETUP UNIQUE · DNS + WIDGET · &lt;30 MIN</span>
       </div>
     </div>
 
     <div class="step">
       <div class="step-num">2</div>
       <div class="step-content">
-        <h3 data-en>🔬 The User Completes a Cognitive Challenge</h3>
-        <h3 data-fr>🔬 L'Utilisateur Complète un Test Cognitif</h3>
-        <p data-en>Instead of a CAPTCHA, the system runs a short invisible interaction — a simple task that takes 10–30 seconds. It measures how a real human brain actually responds: reaction timing, hand tremor, pattern recognition, voice. Not what they type — <em>how</em> they think.</p>
-        <p data-fr>Au lieu d'un CAPTCHA, le système lance une interaction courte et invisible — une tâche simple de 10 à 30 secondes. Il mesure comment un vrai cerveau humain répond réellement : timing de réaction, tremblement de la main, reconnaissance de patterns, voix. Pas ce que la personne tape — <em>comment</em> elle pense.</p>
+        <div class="actor-badge end" data-en>👤 END USER ACTION</div>
+        <div class="actor-badge end" data-fr>👤 ACTION UTILISATEUR FINAL</div>
+        <h3 data-en>🔬 The Widget Analyses Silently — Test Only if Suspicious</h3>
+        <h3 data-fr>🔬 Le Widget Analyse en Silence — Test Uniquement si Suspicion</h3>
+        <p data-en>The widget runs invisibly on every session. For legitimate users, there is zero friction — they see nothing. A cognitive check (10–30 seconds) is only triggered when the system detects anomalies: bot-like behavior, unusual timing, suspicious signals.</p>
+        <p data-fr>Le widget tourne invisiblement sur chaque session. Pour les utilisateurs légitimes, aucune friction — ils ne voient rien. Un test cognitif (10–30 secondes) n'est déclenché que si le système détecte des anomalies : comportement bot, timing inhabituel, signaux suspects.</p>
         <span class="tag">STROOP · N-BACK · TEMPS DE RÉACTION · EMPREINTE VOCALE</span>
       </div>
     </div>
@@ -205,10 +290,12 @@
     <div class="step">
       <div class="step-num">3</div>
       <div class="step-content">
-        <h3 data-en>🧠 The System Scores the Session in Real Time</h3>
-        <h3 data-fr>🧠 Le Système Analyse la Session en Temps Réel</h3>
-        <p data-en>43 behavioral signals are analyzed simultaneously. An ML classifier gives a verdict in under 1 millisecond: <strong>human or not</strong>. No waiting. No server round-trips visible to the user.</p>
-        <p data-fr>43 signaux comportementaux sont analysés simultanément. Un classifieur ML donne un verdict en moins d'1 milliseconde : <strong>humain ou non</strong>. Pas d'attente. Aucun aller-retour serveur visible pour l'utilisateur.</p>
+        <div class="actor-badge ia" data-en>🏢 HCS-U7 ENGINE</div>
+        <div class="actor-badge ia" data-fr>🏢 MOTEUR HCS-U7</div>
+        <h3 data-en>🧠 43 Signals Analyzed in Under 1 Millisecond</h3>
+        <h3 data-fr>🧠 43 Signaux Analysés en Moins d'1 Milliseconde</h3>
+        <p data-en>The AI engine scores the session in real time. Verdict: <strong>human or bot</strong>. Invisible to the legitimate user. The B2B client sees nothing — it just works in the background.</p>
+        <p data-fr>Le moteur IA score la session en temps réel. Verdict : <strong>humain ou bot</strong>. Invisible pour l'utilisateur légitime. Le client B2B ne voit rien — ça fonctionne en arrière-plan.</p>
         <span class="tag">43 SIGNAUX · CLASSIFIEUR ML · VERDICT &lt;1MS</span>
       </div>
     </div>
@@ -216,22 +303,26 @@
     <div class="step">
       <div class="step-num">4</div>
       <div class="step-content">
-        <h3 data-en>🔐 A Unique Signed Code is Issued</h3>
-        <h3 data-fr>🔐 Un Code Signé Unique est Émis</h3>
-        <p data-en>If the session passes, a cryptographic identity code is generated — signed with 3 independent signatures (quantum-resistant). This code is tied to that specific user, device, and moment in time. It expires. It cannot be replayed. It cannot be forged.</p>
-        <p data-fr>Si la session passe, un code d'identité cryptographique est généré — signé avec 3 signatures indépendantes (résistantes au quantique). Ce code est lié à cet utilisateur, cet appareil et ce moment précis. Il expire. Il ne peut pas être rejoué. Il ne peut pas être falsifié.</p>
-        <span class="tag">POST-QUANTIQUE · 3 SIGNATURES · LIÉ À LA SESSION</span>
+        <div class="actor-badge ia" data-en>🏢 HCS-U7 ENGINE</div>
+        <div class="actor-badge ia" data-fr>🏢 MOTEUR HCS-U7</div>
+        <h3 data-en>🔐 A Unique Cryptographic Code is Issued</h3>
+        <h3 data-fr>🔐 Un Code Cryptographique Unique est Émis</h3>
+        <p data-en>If human: a signed identity code is generated — quantum-resistant, tied to this user, device, and moment. It expires. It cannot be replayed or forged. If bot: blocked immediately, no code issued.</p>
+        <p data-fr>Si humain : un code d'identité signé est généré — résistant au quantique, lié à cet utilisateur, cet appareil et ce moment. Il expire. Il ne peut pas être rejoué ni falsifié. Si bot : bloqué immédiatement, aucun code émis.</p>
+        <span class="tag">POST-QUANTIQUE · 3 SIGNATURES · SESSION-BOUND</span>
       </div>
     </div>
 
     <div class="step">
       <div class="step-num">5</div>
       <div class="step-content">
-        <h3 data-en>🛡️ Every Subsequent Request is Verified at the Edge</h3>
-        <h3 data-fr>🛡️ Chaque Requête est Vérifiée à la Périphérie du Réseau</h3>
-        <p data-en>All traffic hitting the client's domain passes through an intelligent Cloudflare proxy first. Each request is scored behaviorally before it even reaches the backend. Suspicious patterns trigger automatic escalation — or full lockdown mode.</p>
-        <p data-fr>Tout le trafic vers le domaine client passe d'abord par un proxy Cloudflare intelligent. Chaque requête est scorée comportementalement avant même d'atteindre le backend. Les patterns suspects déclenchent une escalade automatique — ou le mode verrouillage total.</p>
-        <span class="tag">CLOUDFLARE EDGE · SCORING COMPORTEMENTAL · AUTO-ESCALADE</span>
+        <div class="actor-badge" data-en>🏦 B2B CLIENT BENEFIT</div>
+        <div class="actor-badge" data-fr>🏦 BÉNÉFICE CLIENT B2B</div>
+        <h3 data-en>🛡️ The Domain is Continuously Protected — Automatically</h3>
+        <h3 data-fr>🛡️ Le Domaine est Continuellement Protégé — Automatiquement</h3>
+        <p data-en>All traffic passes through the Cloudflare edge proxy before reaching the backend. Bots are blocked silently. If a flood is detected, BUNKER mode locks down the domain automatically. The B2B client gets real-time threat intelligence on their dashboard.</p>
+        <p data-fr>Tout le trafic passe par le proxy Cloudflare edge avant d'atteindre le backend. Les bots sont bloqués silencieusement. Si un flood est détecté, le mode BUNKER verrouille le domaine automatiquement. Le client B2B reçoit une intelligence de menace en temps réel sur son dashboard.</p>
+        <span class="tag">CLOUDFLARE EDGE · AUTO-ESCALADE · DASHBOARD TEMPS RÉEL</span>
       </div>
     </div>
 
@@ -390,19 +481,14 @@
       <h2 data-fr>Prêt à Intégrer Votre Premier Client ?</h2>
       <p data-en>Contact IA-SOLUTION to get your partner access, technical documentation, and integration support.</p>
       <p data-fr>Contactez IA-SOLUTION pour obtenir votre accès partenaire, la documentation technique et le support d'intégration.</p>
-      <a href="mailto:contact@ia-solution.fr" class="cta-btn" data-en>Contact IA-SOLUTION →</a>
-      <a href="mailto:contact@ia-solution.fr" class="cta-btn" data-fr>Contacter IA-SOLUTION →</a>
+      <a href="/cdn-cgi/l/email-protection#5635393822373522163f377b25393a23223f3938783024" class="cta-btn" data-en>Contact IA-SOLUTION →</a>
+      <a href="/cdn-cgi/l/email-protection#a5c6cacbd1c4c6d1e5ccc488d6cac9d0d1cccacb8bc3d7" class="cta-btn" data-fr>Contacter IA-SOLUTION →</a>
     </div>
   </div>
 
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   function setLang(lang) {
     document.body.className = 'lang-' + lang;
-    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector('.lang-btn[onclick="setLang(\'' + lang + '\')"]').classList.add('active');
-  }
-</script>
-</body>
-</html>
+    document.querySelecto
