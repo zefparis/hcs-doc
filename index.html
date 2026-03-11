@@ -6,196 +6,113 @@
 <title>HCS-U7 — Domain Protection</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <script>
-  function setLang(lang) {
-    document.body.className = 'lang-' + lang;
-    document.querySelectorAll('.lang-btn').forEach(function(btn) { btn.classList.remove('active'); });
-    document.querySelectorAll('.lang-btn').forEach(function(btn) {
-      if (btn.getAttribute('data-lang') === lang) btn.classList.add('active');
-    });
-  }
+function setLang(lang) {
+  document.body.className = 'lang-' + lang;
+  document.querySelectorAll('.lang-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.querySelectorAll('.lang-btn[data-lang="'+lang+'"]').forEach(function(b){ b.classList.add('active'); });
+}
 </script>
 <style>
-  :root {
-    --cyan: #00C2FF; --dark: #050C14; --dark2: #0A1628; --dark3: #0F2040;
-    --text: #C8DFF0; --muted: #5A7A9A; --green: #00E5A0; --orange: #FF6B35; --white: #F0F8FF;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--dark); color: var(--text); font-family: 'Syne', sans-serif; overflow-x: hidden; }
-  body::before {
-    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
-    background-image: linear-gradient(rgba(0,194,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(0,194,255,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-  .container { max-width: 960px; margin: 0 auto; padding: 60px 24px; position: relative; z-index: 1; }
-
-  /* LANG SWITCHER */
-  .lang-switcher {
-    position: fixed; top: 20px; right: 24px; z-index: 100;
-    display: flex; gap: 4px;
-  }
-  .lang-btn {
-    font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 1px;
-    padding: 6px 14px; cursor: pointer; border: 1px solid rgba(0,194,255,0.3);
-    background: var(--dark2); color: var(--muted); transition: all 0.2s;
-  }
-  .lang-btn.active { background: var(--cyan); color: var(--dark); border-color: var(--cyan); font-weight: 700; }
-
-  /* HEADER */
-  .header { text-align: center; margin-bottom: 64px; }
-  .badge {
-    display: inline-block; font-family: 'Space Mono', monospace; font-size: 11px;
-    letter-spacing: 3px; color: var(--cyan); border: 1px solid rgba(0,194,255,0.3);
-    padding: 6px 16px; margin-bottom: 24px; text-transform: uppercase;
-  }
-  h1 { font-size: clamp(32px, 5vw, 52px); font-weight: 800; line-height: 1.1; color: var(--white); margin-bottom: 16px; }
-  h1 span { color: var(--cyan); }
-  .subtitle { font-size: 18px; color: var(--muted); max-width: 520px; margin: 0 auto; line-height: 1.6; }
-
-  /* SECTION LABEL */
-  .section-label {
-    font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 3px;
-    color: var(--cyan); text-transform: uppercase; margin-bottom: 32px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .section-label::after { content: ''; flex: 1; height: 1px; background: rgba(0,194,255,0.2); }
-
-  /* PROBLEM */
-  .problem-block {
-    background: rgba(255,107,53,0.07); border: 1px solid rgba(255,107,53,0.25);
-    border-left: 3px solid var(--orange); padding: 28px 32px; margin-bottom: 48px;
-  }
-  .problem-block h2 { font-size: 20px; font-weight: 700; color: var(--orange); margin-bottom: 12px; }
-  .problem-block p { font-size: 16px; line-height: 1.7; }
-
-  /* STEPS */
-  .steps { display: flex; flex-direction: column; margin-bottom: 64px; }
-  .step { display: grid; grid-template-columns: 64px 1fr; gap: 24px; align-items: start; position: relative; }
-  .step:not(:last-child)::after {
-    content: ''; position: absolute; left: 31px; top: 64px; bottom: -1px; width: 2px;
-    background: linear-gradient(to bottom, rgba(0,194,255,0.4), rgba(0,194,255,0.05));
-  }
-  .step-num {
-    width: 64px; height: 64px; background: var(--dark2); border: 2px solid rgba(0,194,255,0.4);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; color: var(--cyan);
-    flex-shrink: 0; position: relative; z-index: 1;
-  }
-  .step-content {
-    background: var(--dark2); border: 1px solid rgba(0,194,255,0.12);
-    padding: 24px 28px; margin-bottom: 20px; transition: border-color 0.2s;
-  }
-  .step-content:hover { border-color: rgba(0,194,255,0.3); }
-  .step-content h3 { font-size: 17px; font-weight: 700; color: var(--white); margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
-  .step-content p { font-size: 15px; line-height: 1.65; }
-  .tag {
-    display: inline-block; font-family: 'Space Mono', monospace; font-size: 10px;
-    padding: 3px 8px; background: rgba(0,194,255,0.1); color: var(--cyan);
-    border: 1px solid rgba(0,194,255,0.2); margin-top: 12px; letter-spacing: 1px;
-  }
-
-  /* CLIENT VIEW */
-  .client-view {
-    background: var(--dark2); border: 1px solid rgba(0,194,255,0.15);
-    padding: 40px; margin-bottom: 64px; position: relative;
-  }
-  .client-view::before {
-    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 2px;
-    color: var(--cyan); background: var(--dark2); padding: 0 8px;
-    position: absolute; top: -10px; left: 24px;
-  }
-  .lang-en .client-view::before { content: 'CLIENT EXPERIENCE'; }
-  .lang-fr .client-view::before { content: 'EXPÉRIENCE CLIENT'; }
-  .domain-demo { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 20px 0 28px; font-family: 'Space Mono', monospace; }
-  .domain-part { padding: 10px 16px; font-size: 15px; font-weight: 700; }
-  .domain-secure { background: rgba(0,229,160,0.12); color: var(--green); border: 1px solid rgba(0,229,160,0.3); }
-  .domain-dot { color: var(--muted); font-size: 20px; }
-  .domain-client { background: rgba(0,194,255,0.1); color: var(--cyan); border: 1px solid rgba(0,194,255,0.3); }
-  .domain-tld { background: var(--dark3); color: var(--muted); border: 1px solid rgba(255,255,255,0.08); }
-  .client-view p { font-size: 15px; line-height: 1.7; }
-  .pulse { display: inline-block; width: 8px; height: 8px; background: var(--green); border-radius: 50%; margin-right: 8px; animation: pulse 2s infinite; }
-
-  /* BLOCKS GRID */
-  .blocks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 64px; }
-  .block-card { background: var(--dark2); border: 1px solid rgba(255,255,255,0.06); padding: 20px; position: relative; overflow: hidden; }
-  .block-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--cyan); opacity: 0.4; }
-  .block-card .icon { font-size: 24px; margin-bottom: 12px; }
-  .block-card h4 { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
-  .block-card p { font-size: 13px; color: var(--muted); line-height: 1.5; }
-  .blocked { font-family: 'Space Mono', monospace; font-size: 10px; color: var(--orange); margin-top: 10px; letter-spacing: 1px; }
-
-  /* SUMMARY */
-  .summary { background: var(--dark2); border: 1px solid rgba(0,194,255,0.15); overflow: hidden; margin-bottom: 64px; }
-  .summary-header { background: var(--dark3); padding: 16px 24px; font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 2px; color: var(--cyan); text-transform: uppercase; }
-  .summary-row { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid rgba(255,255,255,0.05); }
-  .summary-row:last-child { border-bottom: none; }
-  .summary-cell { padding: 16px 24px; font-size: 14px; }
-  .summary-cell:first-child { color: var(--muted); border-right: 1px solid rgba(255,255,255,0.05); }
-  .summary-cell:last-child { color: var(--white); font-weight: 600; }
-  .ok { color: var(--green) !important; }
-
-  /* CTA */
-  .cta { text-align: center; padding: 48px; background: linear-gradient(135deg, rgba(0,194,255,0.06), rgba(0,229,160,0.03)); border: 1px solid rgba(0,194,255,0.2); }
-  .cta h2 { font-size: 26px; font-weight: 800; color: var(--white); margin-bottom: 12px; }
-  .cta p { color: var(--muted); font-size: 15px; margin-bottom: 28px; }
-  .cta-btn { display: inline-block; font-family: 'Space Mono', monospace; font-size: 13px; letter-spacing: 2px; color: var(--dark); background: var(--cyan); padding: 14px 32px; text-decoration: none; font-weight: 700; text-transform: uppercase; }
-
-  /* ANIMATIONS */
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-  .animate { animation: fadeUp 0.5s ease forwards; opacity: 0; }
-  .d1{animation-delay:0.1s} .d2{animation-delay:0.2s} .d3{animation-delay:0.3s}
-  .d4{animation-delay:0.4s} .d5{animation-delay:0.5s} .d6{animation-delay:0.6s}
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
-
-  /* 3 ACTORS GRID */
-  .actors-grid {
-    display: grid; grid-template-columns: 1fr auto 1fr auto 1fr;
-    gap: 0; align-items: center; margin-bottom: 48px;
-  }
-  @media (max-width: 640px) {
-    .actors-grid { grid-template-columns: 1fr; }
-    .actor-arrow { transform: rotate(90deg); text-align: center; padding: 8px 0; }
-  }
-  .actor-card {
-    background: var(--dark2); border: 1px solid rgba(255,255,255,0.08);
-    padding: 24px 20px; text-align: center;
-  }
-  .actor-card.actor-b2b { border-color: rgba(0,194,255,0.3); border-top: 2px solid var(--cyan); }
-  .actor-card.actor-ia { border-top: 2px solid var(--green); }
-  .actor-card.actor-end { border-top: 2px solid var(--muted); }
-  .actor-icon { font-size: 28px; margin-bottom: 12px; }
-  .actor-card h4 { font-size: 15px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
-  .actor-card p { font-size: 13px; color: var(--muted); line-height: 1.5; margin-bottom: 12px; }
-  .actor-role {
-    font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 1px;
-    color: var(--cyan); display: block;
-  }
-  .actor-arrow { font-size: 24px; color: var(--muted); padding: 0 12px; text-align: center; }
-
-  /* ACTOR BADGES ON STEPS */
-  .actor-badge {
-    font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 1px;
-    color: var(--cyan); background: rgba(0,194,255,0.08);
-    border: 1px solid rgba(0,194,255,0.2); display: inline-block;
-    padding: 3px 10px; margin-bottom: 10px;
-  }
-  .actor-badge.end { color: var(--muted); background: rgba(90,122,154,0.1); border-color: rgba(90,122,154,0.2); }
-  .actor-badge.ia { color: var(--green); background: rgba(0,229,160,0.08); border-color: rgba(0,229,160,0.2); }
-
-  /* LANG VISIBILITY */
-  .lang-en [data-fr], .lang-fr [data-en] { display: none; }
+:root{--cyan:#00C2FF;--dark:#050C14;--dark2:#0A1628;--dark3:#0F2040;--text:#C8DFF0;--muted:#5A7A9A;--green:#00E5A0;--orange:#FF6B35;--white:#F0F8FF}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{font-size:16px}
+body{background:var(--dark);color:var(--text);font-family:'Syne',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(0,194,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,194,255,0.04) 1px,transparent 1px);background-size:40px 40px}
+.lang-switcher{position:fixed;top:16px;right:16px;z-index:200;display:flex;gap:4px}
+.lang-btn{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px;padding:7px 14px;cursor:pointer;border:1px solid rgba(0,194,255,0.3);background:rgba(10,22,40,0.92);color:var(--muted);transition:all .2s;backdrop-filter:blur(8px)}
+.lang-btn.active{background:var(--cyan);color:var(--dark);border-color:var(--cyan);font-weight:700}
+.container{max-width:960px;margin:0 auto;padding:clamp(40px,8vw,80px) clamp(16px,5vw,32px);position:relative;z-index:1}
+.header{text-align:center;margin-bottom:clamp(40px,8vw,72px)}
+.badge{display:inline-block;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--cyan);border:1px solid rgba(0,194,255,0.3);padding:6px 16px;margin-bottom:20px;text-transform:uppercase}
+h1{font-size:clamp(24px,6vw,52px);font-weight:800;line-height:1.15;color:var(--white);margin-bottom:16px}
+h1 span{color:var(--cyan)}
+.subtitle{font-size:clamp(14px,2.5vw,18px);color:var(--muted);max-width:520px;margin:0 auto;line-height:1.6}
+.section-label{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:3px;color:var(--cyan);text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:12px}
+.section-label::after{content:'';flex:1;height:1px;background:rgba(0,194,255,0.2)}
+.problem-block{background:rgba(255,107,53,0.07);border:1px solid rgba(255,107,53,0.25);border-left:3px solid var(--orange);padding:clamp(16px,4vw,28px);margin-bottom:clamp(32px,6vw,56px)}
+.problem-block h2{font-size:clamp(15px,3vw,20px);font-weight:700;color:var(--orange);margin-bottom:10px}
+.problem-block p{font-size:clamp(13px,2vw,15px);line-height:1.7}
+.actors-grid{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;align-items:stretch;margin-bottom:clamp(32px,6vw,56px)}
+.actor-card{background:var(--dark2);padding:clamp(14px,3vw,24px) clamp(10px,2vw,20px);text-align:center;border:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;align-items:center;gap:8px}
+.actor-card.actor-ia{border-top:2px solid var(--green)}
+.actor-card.actor-b2b{border:1px solid rgba(0,194,255,0.3);border-top:2px solid var(--cyan)}
+.actor-card.actor-end{border-top:2px solid var(--muted)}
+.actor-icon{font-size:clamp(20px,4vw,30px)}
+.actor-card h4{font-size:clamp(12px,2vw,15px);font-weight:700;color:var(--white)}
+.actor-card p{font-size:clamp(11px,1.5vw,13px);color:var(--muted);line-height:1.5;flex:1}
+.actor-role{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;color:var(--cyan);display:block;margin-top:4px}
+.actor-arrow{display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--muted);padding:0 8px;flex-shrink:0}
+.steps{display:flex;flex-direction:column;margin-bottom:clamp(40px,8vw,72px)}
+.step{display:grid;grid-template-columns:56px 1fr;gap:clamp(12px,3vw,24px);align-items:start;position:relative}
+.step:not(:last-child)::after{content:'';position:absolute;left:27px;top:56px;bottom:-1px;width:2px;background:linear-gradient(to bottom,rgba(0,194,255,0.4),rgba(0,194,255,0.04))}
+.step-num{width:56px;height:56px;background:var(--dark2);border:2px solid rgba(0,194,255,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:var(--cyan);flex-shrink:0;position:relative;z-index:1}
+.step-content{background:var(--dark2);border:1px solid rgba(0,194,255,0.1);padding:clamp(14px,3vw,24px);margin-bottom:clamp(12px,3vw,20px);transition:border-color .2s}
+.step-content:hover{border-color:rgba(0,194,255,0.3)}
+.step-content h3{font-size:clamp(13px,2.5vw,17px);font-weight:700;color:var(--white);margin-bottom:8px;line-height:1.3}
+.step-content p{font-size:clamp(12px,2vw,15px);line-height:1.65}
+.tag{display:inline-block;font-family:'Space Mono',monospace;font-size:10px;padding:3px 8px;background:rgba(0,194,255,0.1);color:var(--cyan);border:1px solid rgba(0,194,255,0.2);margin-top:12px;letter-spacing:1px;word-break:break-word}
+.actor-badge{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--cyan);background:rgba(0,194,255,0.08);border:1px solid rgba(0,194,255,0.2);display:inline-block;padding:3px 10px;margin-bottom:10px}
+.actor-badge.end{color:var(--muted);background:rgba(90,122,154,0.1);border-color:rgba(90,122,154,0.2)}
+.actor-badge.ia{color:var(--green);background:rgba(0,229,160,0.08);border-color:rgba(0,229,160,0.2)}
+.client-view{background:var(--dark2);border:1px solid rgba(0,194,255,0.15);padding:clamp(20px,5vw,40px);margin-bottom:clamp(40px,8vw,72px);position:relative}
+.client-view::before{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--cyan);background:var(--dark2);padding:0 8px;position:absolute;top:-10px;left:20px}
+.lang-en .client-view::before{content:'CLIENT EXPERIENCE'}
+.lang-fr .client-view::before{content:'EXPÉRIENCE CLIENT'}
+.client-view p{font-size:clamp(13px,2vw,15px);line-height:1.7}
+.domain-demo{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:20px 0 24px;font-family:'Space Mono',monospace}
+.domain-part{padding:8px 14px;font-size:clamp(11px,2vw,15px);font-weight:700}
+.domain-secure{background:rgba(0,229,160,0.12);color:var(--green);border:1px solid rgba(0,229,160,0.3)}
+.domain-dot{color:var(--muted);font-size:18px}
+.domain-client{background:rgba(0,194,255,0.1);color:var(--cyan);border:1px solid rgba(0,194,255,0.3)}
+.domain-tld{background:var(--dark3);color:var(--muted);border:1px solid rgba(255,255,255,0.08)}
+.pulse{display:inline-block;width:8px;height:8px;background:var(--green);border-radius:50%;margin-right:8px;animation:pulse 2s infinite}
+.blocks-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:clamp(10px,2vw,16px);margin-bottom:clamp(40px,8vw,72px)}
+.block-card{background:var(--dark2);border:1px solid rgba(255,255,255,0.06);padding:clamp(14px,2vw,20px);position:relative;overflow:hidden}
+.block-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--cyan);opacity:.4}
+.block-card .icon{font-size:clamp(20px,3vw,24px);margin-bottom:10px;display:block}
+.block-card h4{font-size:clamp(12px,2vw,14px);font-weight:700;color:var(--white);margin-bottom:6px}
+.block-card p{font-size:clamp(11px,1.5vw,13px);color:var(--muted);line-height:1.5}
+.blocked{font-family:'Space Mono',monospace;font-size:9px;color:var(--orange);margin-top:10px;letter-spacing:1px}
+.summary{background:var(--dark2);border:1px solid rgba(0,194,255,0.15);overflow:hidden;margin-bottom:clamp(40px,8vw,72px)}
+.summary-header{background:var(--dark3);padding:14px 20px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--cyan);text-transform:uppercase}
+.summary-row{display:grid;grid-template-columns:1fr 1.5fr;border-bottom:1px solid rgba(255,255,255,0.05)}
+.summary-row:last-child{border-bottom:none}
+.summary-cell{padding:clamp(10px,2vw,16px) clamp(12px,3vw,24px);font-size:clamp(12px,1.8vw,14px)}
+.summary-cell:first-child{color:var(--muted);border-right:1px solid rgba(255,255,255,0.05)}
+.summary-cell:last-child{color:var(--white);font-weight:600}
+.ok{color:var(--green)!important}
+.cta{text-align:center;padding:clamp(28px,6vw,56px) clamp(16px,5vw,48px);background:linear-gradient(135deg,rgba(0,194,255,0.06),rgba(0,229,160,0.03));border:1px solid rgba(0,194,255,0.2)}
+.cta h2{font-size:clamp(18px,4vw,28px);font-weight:800;color:var(--white);margin-bottom:12px}
+.cta p{color:var(--muted);font-size:clamp(13px,2vw,15px);margin-bottom:24px;line-height:1.6}
+.cta-btn{display:inline-block;font-family:'Space Mono',monospace;font-size:clamp(11px,1.5vw,13px);letter-spacing:2px;color:var(--dark);background:var(--cyan);padding:14px clamp(20px,4vw,32px);text-decoration:none;font-weight:700;text-transform:uppercase}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.animate{animation:fadeUp .5s ease forwards;opacity:0}
+.d1{animation-delay:.1s}.d2{animation-delay:.2s}.d3{animation-delay:.3s}.d4{animation-delay:.4s}.d5{animation-delay:.5s}.d6{animation-delay:.6s}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+.lang-en [data-fr],.lang-fr [data-en]{display:none}
+@media(max-width:700px){
+  .actors-grid{grid-template-columns:1fr}
+  .actor-arrow{transform:rotate(90deg);padding:6px 0;height:36px;display:flex;align-items:center;justify-content:center;background:var(--dark)}
+  .step{grid-template-columns:44px 1fr;gap:12px}
+  .step-num{width:44px;height:44px;font-size:14px}
+  .step:not(:last-child)::after{left:21px;top:44px}
+  .summary-row{grid-template-columns:1fr}
+  .summary-cell:first-child{border-right:none;border-bottom:1px solid rgba(255,255,255,0.05);padding-bottom:6px}
+  .summary-cell:last-child{padding-top:6px}
+}
+@media(max-width:400px){
+  .step{grid-template-columns:36px 1fr;gap:10px}
+  .step-num{width:36px;height:36px;font-size:12px}
+  .step:not(:last-child)::after{left:17px;top:36px}
+}
 </style>
 </head>
 <body class="lang-en">
-
-<!-- LANGUAGE SWITCHER -->
 <div class="lang-switcher">
   <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
   <button class="lang-btn" data-lang="fr" onclick="setLang('fr')">FR</button>
 </div>
-
 <div class="container">
-
-  <!-- HEADER -->
   <div class="header animate d1">
     <div class="badge">HCS-U7 · Partner Guide</div>
     <h1 data-en>How <span>Domain Protection</span><br>Actually Works</h1>
@@ -203,30 +120,25 @@
     <p class="subtitle" data-en>Everything your clients need to understand in 2 minutes — no engineering degree required.</p>
     <p class="subtitle" data-fr>Tout ce que vos clients doivent comprendre en 2 minutes — sans diplôme d'ingénieur.</p>
   </div>
-
-  <!-- PROBLEM -->
   <div class="animate d2">
     <div class="section-label" data-en>The Problem</div>
     <div class="section-label" data-fr>Le Problème</div>
     <div class="problem-block">
       <h2 data-en>⚠️ Anyone Can Fake a Human Online</h2>
       <h2 data-fr>⚠️ N'importe Qui Peut Imiter un Humain en Ligne</h2>
-      <p data-en>Today, bots, AI scripts, and automated tools can fill forms, bypass logins, and abuse APIs at scale — all while looking exactly like a real user. Traditional CAPTCHAs are solved in milliseconds. Password checks don't stop automated credential stuffing. Your client's domain is wide open.</p>
-      <p data-fr>Aujourd'hui, les bots, scripts IA et outils automatisés peuvent remplir des formulaires, contourner des logins et abuser des APIs à grande échelle — tout en ressemblant exactement à un utilisateur réel. Les CAPTCHAs classiques sont résolus en millisecondes. Les vérifications de mot de passe ne stoppent pas les attaques de credential stuffing. Le domaine de votre client est grand ouvert.</p>
+      <p data-en>Today, bots, AI scripts, and automated tools can fill forms, bypass logins, and abuse APIs at scale — all while looking exactly like a real user. Traditional CAPTCHAs are solved in milliseconds. Password checks don't stop credential stuffing. Your client's domain is wide open.</p>
+      <p data-fr>Aujourd'hui, bots, scripts IA et outils automatisés peuvent remplir des formulaires, contourner des logins et abuser des APIs à grande échelle — tout en ressemblant à un utilisateur réel. Les CAPTCHAs sont résolus en millisecondes. Les mots de passe ne stoppent pas le credential stuffing. Le domaine de votre client est grand ouvert.</p>
     </div>
   </div>
-
-  <!-- 3 ACTORS -->
   <div class="animate d3">
     <div class="section-label" data-en>3 Actors — Understanding the Model</div>
     <div class="section-label" data-fr>3 Acteurs — Comprendre le Modèle</div>
     <div class="actors-grid">
       <div class="actor-card actor-ia">
         <div class="actor-icon">🏢</div>
-        <h4 data-en>IA-SOLUTION</h4>
-        <h4 data-fr>IA-SOLUTION</h4>
-        <p data-en>Provides the HCS-U7 technology. Manages the infrastructure, the AI, and the cryptographic engine.</p>
-        <p data-fr>Fournit la technologie HCS-U7. Gère l'infrastructure, l'IA et le moteur cryptographique.</p>
+        <h4>IA-SOLUTION</h4>
+        <p data-en>Provides the HCS-U7 technology. Manages the infrastructure, AI engine, and cryptographic layer.</p>
+        <p data-fr>Fournit la technologie HCS-U7. Gère l'infrastructure, le moteur IA et la couche cryptographique.</p>
         <span class="actor-role" data-en>TECHNOLOGY PROVIDER</span>
         <span class="actor-role" data-fr>FOURNISSEUR TECHNOLOGIE</span>
       </div>
@@ -235,32 +147,28 @@
         <div class="actor-icon">🏦</div>
         <h4 data-en>Your B2B Client</h4>
         <h4 data-fr>Votre Client B2B</h4>
-        <p data-en>A bank, fintech, or any company that wants to protect their domain. They integrate HCS-U7 once — that's it.</p>
-        <p data-fr>Une banque, fintech ou toute entreprise souhaitant protéger son domaine. Ils intègrent HCS-U7 une fois — c'est tout.</p>
+        <p data-en>A bank, fintech, or company that wants to protect their domain. Integrates HCS-U7 once — under 30 min.</p>
+        <p data-fr>Une banque, fintech ou entreprise souhaitant protéger son domaine. Intègre HCS-U7 une fois — moins de 30 min.</p>
         <span class="actor-role" data-en>DOMAIN OWNER · PAYS THE LICENSE</span>
-        <span class="actor-role" data-fr>PROPRIÉTAIRE DU DOMAINE · PAIE LA LICENCE</span>
+        <span class="actor-role" data-fr>PROPRIÉTAIRE DOMAINE · PAIE LA LICENCE</span>
       </div>
       <div class="actor-arrow">→</div>
       <div class="actor-card actor-end">
         <div class="actor-icon">👤</div>
         <h4 data-en>End Users</h4>
         <h4 data-fr>Utilisateurs Finaux</h4>
-        <p data-en>Customers of the B2B client. In most cases they see nothing — the widget analyses silently. A cognitive check is only triggered if suspicion is detected.</p>
+        <p data-en>Customers of the B2B client. In most cases they see nothing — the widget analyses silently. A cognitive check is only triggered on detected suspicion.</p>
         <p data-fr>Les clients du client B2B. Dans la plupart des cas ils ne voient rien — le widget analyse en silence. Un test cognitif n'est déclenché qu'en cas de suspicion détectée.</p>
-        <span class="actor-role" data-en>TRANSPARENT EXPERIENCE</span>
-        <span class="actor-role" data-fr>EXPÉRIENCE TRANSPARENTE</span>
+        <span class="actor-role" data-en>ZERO FRICTION BY DEFAULT</span>
+        <span class="actor-role" data-fr>ZÉRO FRICTION PAR DÉFAUT</span>
       </div>
     </div>
   </div>
-
-  <!-- STEPS -->
-  <div class="animate d3" style="margin-top:48px">
+  <div class="animate d3">
     <div class="section-label" data-en>How It Works — Step by Step</div>
     <div class="section-label" data-fr>Comment Ça Fonctionne — Étape par Étape</div>
   </div>
-
   <div class="steps animate d3">
-
     <div class="step">
       <div class="step-num">1</div>
       <div class="step-content">
@@ -268,25 +176,23 @@
         <div class="actor-badge" data-fr>🏦 ACTION CLIENT B2B</div>
         <h3 data-en>🌐 The B2B Client Activates Their Protected Subdomain</h3>
         <h3 data-fr>🌐 Le Client B2B Active Son Sous-Domaine Protégé</h3>
-        <p data-en>The company subscribes to HCS-U7 and gets a dedicated subdomain — <strong>secure.theircompany.com</strong>. They add a DNS record and embed a widget on their site. One-time setup, under 30 minutes. Their users don't do anything — it's transparent.</p>
-        <p data-fr>L'entreprise souscrit à HCS-U7 et obtient un sous-domaine dédié — <strong>secure.leurentreprise.com</strong>. Elle ajoute un enregistrement DNS et intègre un widget sur son site. Configuration unique, moins de 30 minutes. Ses utilisateurs ne font rien — c'est transparent.</p>
-        <span class="tag">SETUP UNIQUE · DNS + WIDGET · &lt;30 MIN</span>
+        <p data-en>The company subscribes to HCS-U7 and gets a dedicated subdomain — <strong>secure.theircompany.com</strong>. One DNS record, one widget embed. Done in under 30 minutes. Their end users see nothing different.</p>
+        <p data-fr>L'entreprise souscrit à HCS-U7 et obtient un sous-domaine dédié — <strong>secure.leurentreprise.com</strong>. Un enregistrement DNS, un widget intégré. Terminé en moins de 30 minutes. Ses utilisateurs finaux ne voient rien de différent.</p>
+        <span class="tag">ONE-TIME SETUP · DNS + WIDGET · &lt;30 MIN</span>
       </div>
     </div>
-
     <div class="step">
       <div class="step-num">2</div>
       <div class="step-content">
-        <div class="actor-badge end" data-en>👤 END USER ACTION</div>
-        <div class="actor-badge end" data-fr>👤 ACTION UTILISATEUR FINAL</div>
+        <div class="actor-badge end" data-en>👤 END USER — INVISIBLE BY DEFAULT</div>
+        <div class="actor-badge end" data-fr>👤 UTILISATEUR FINAL — INVISIBLE PAR DÉFAUT</div>
         <h3 data-en>🔬 The Widget Analyses Silently — Test Only if Suspicious</h3>
         <h3 data-fr>🔬 Le Widget Analyse en Silence — Test Uniquement si Suspicion</h3>
-        <p data-en>The widget runs invisibly on every session. For legitimate users, there is zero friction — they see nothing. A cognitive check (10–30 seconds) is only triggered when the system detects anomalies: bot-like behavior, unusual timing, suspicious signals.</p>
-        <p data-fr>Le widget tourne invisiblement sur chaque session. Pour les utilisateurs légitimes, aucune friction — ils ne voient rien. Un test cognitif (10–30 secondes) n'est déclenché que si le système détecte des anomalies : comportement bot, timing inhabituel, signaux suspects.</p>
-        <span class="tag">STROOP · N-BACK · TEMPS DE RÉACTION · EMPREINTE VOCALE</span>
+        <p data-en>For legitimate users: zero friction, they see nothing. The widget runs silently in the background. A cognitive check (10–30 sec) is only triggered when the system detects anomalies — bot-like behavior, timing irregularities, suspicious signals.</p>
+        <p data-fr>Pour les utilisateurs légitimes : zéro friction, ils ne voient rien. Le widget tourne silencieusement en arrière-plan. Un test cognitif (10–30 sec) n'est déclenché que si le système détecte des anomalies — comportement bot, irrégularités de timing, signaux suspects.</p>
+        <span class="tag">STROOP · N-BACK · REACTION TIME · VOICEPRINT</span>
       </div>
     </div>
-
     <div class="step">
       <div class="step-num">3</div>
       <div class="step-content">
@@ -294,47 +200,42 @@
         <div class="actor-badge ia" data-fr>🏢 MOTEUR HCS-U7</div>
         <h3 data-en>🧠 43 Signals Analyzed in Under 1 Millisecond</h3>
         <h3 data-fr>🧠 43 Signaux Analysés en Moins d'1 Milliseconde</h3>
-        <p data-en>The AI engine scores the session in real time. Verdict: <strong>human or bot</strong>. Invisible to the legitimate user. The B2B client sees nothing — it just works in the background.</p>
-        <p data-fr>Le moteur IA score la session en temps réel. Verdict : <strong>humain ou bot</strong>. Invisible pour l'utilisateur légitime. Le client B2B ne voit rien — ça fonctionne en arrière-plan.</p>
-        <span class="tag">43 SIGNAUX · CLASSIFIEUR ML · VERDICT &lt;1MS</span>
+        <p data-en>The AI engine scores every session in real time. Verdict: <strong>human or bot</strong>. Invisible to the legitimate user. The B2B client's site keeps running normally.</p>
+        <p data-fr>Le moteur IA score chaque session en temps réel. Verdict : <strong>humain ou bot</strong>. Invisible pour l'utilisateur légitime. Le site du client B2B continue de tourner normalement.</p>
+        <span class="tag">43 SIGNALS · ML CLASSIFIER · &lt;1MS VERDICT</span>
       </div>
     </div>
-
     <div class="step">
       <div class="step-num">4</div>
       <div class="step-content">
         <div class="actor-badge ia" data-en>🏢 HCS-U7 ENGINE</div>
         <div class="actor-badge ia" data-fr>🏢 MOTEUR HCS-U7</div>
-        <h3 data-en>🔐 A Unique Cryptographic Code is Issued</h3>
-        <h3 data-fr>🔐 Un Code Cryptographique Unique est Émis</h3>
-        <p data-en>If human: a signed identity code is generated — quantum-resistant, tied to this user, device, and moment. It expires. It cannot be replayed or forged. If bot: blocked immediately, no code issued.</p>
-        <p data-fr>Si humain : un code d'identité signé est généré — résistant au quantique, lié à cet utilisateur, cet appareil et ce moment. Il expire. Il ne peut pas être rejoué ni falsifié. Si bot : bloqué immédiatement, aucun code émis.</p>
-        <span class="tag">POST-QUANTIQUE · 3 SIGNATURES · SESSION-BOUND</span>
+        <h3 data-en>🔐 Human: Code Issued. Bot: Blocked Instantly.</h3>
+        <h3 data-fr>🔐 Humain : Code Émis. Bot : Bloqué Instantanément.</h3>
+        <p data-en>If human: a quantum-resistant signed code is generated — tied to this user, device, and moment. It expires. Cannot be replayed or forged. If bot: blocked immediately, no code issued, no access granted.</p>
+        <p data-fr>Si humain : un code signé résistant au quantique est généré — lié à cet utilisateur, cet appareil et ce moment. Il expire. Non rejouable, non falsifiable. Si bot : bloqué immédiatement, aucun code, aucun accès.</p>
+        <span class="tag">POST-QUANTUM · 3 SIGNATURES · SESSION-BOUND</span>
       </div>
     </div>
-
     <div class="step">
       <div class="step-num">5</div>
       <div class="step-content">
         <div class="actor-badge" data-en>🏦 B2B CLIENT BENEFIT</div>
         <div class="actor-badge" data-fr>🏦 BÉNÉFICE CLIENT B2B</div>
-        <h3 data-en>🛡️ The Domain is Continuously Protected — Automatically</h3>
-        <h3 data-fr>🛡️ Le Domaine est Continuellement Protégé — Automatiquement</h3>
-        <p data-en>All traffic passes through the Cloudflare edge proxy before reaching the backend. Bots are blocked silently. If a flood is detected, BUNKER mode locks down the domain automatically. The B2B client gets real-time threat intelligence on their dashboard.</p>
-        <p data-fr>Tout le trafic passe par le proxy Cloudflare edge avant d'atteindre le backend. Les bots sont bloqués silencieusement. Si un flood est détecté, le mode BUNKER verrouille le domaine automatiquement. Le client B2B reçoit une intelligence de menace en temps réel sur son dashboard.</p>
-        <span class="tag">CLOUDFLARE EDGE · AUTO-ESCALADE · DASHBOARD TEMPS RÉEL</span>
+        <h3 data-en>🛡️ Continuous Automatic Protection — Dashboard Included</h3>
+        <h3 data-fr>🛡️ Protection Continue et Automatique — Dashboard Inclus</h3>
+        <p data-en>All traffic passes through the Cloudflare edge proxy first. Bots are blocked silently. If a flood is detected, BUNKER mode locks the domain automatically. The B2B client monitors everything in real time on their dashboard.</p>
+        <p data-fr>Tout le trafic passe d'abord par le proxy Cloudflare edge. Les bots sont bloqués silencieusement. Si un flood est détecté, le mode BUNKER verrouille le domaine automatiquement. Le client B2B surveille tout en temps réel sur son dashboard.</p>
+        <span class="tag">CLOUDFLARE EDGE · AUTO-ESCALATION · REAL-TIME DASHBOARD</span>
       </div>
     </div>
-
   </div>
-
-  <!-- CLIENT EXPERIENCE -->
   <div class="animate d4">
-    <div class="section-label" data-en>What It Looks Like for the Client</div>
-    <div class="section-label" data-fr>Ce Que Voit le Client</div>
+    <div class="section-label" data-en>What the Protected Domain Looks Like</div>
+    <div class="section-label" data-fr>À Quoi Ressemble le Domaine Protégé</div>
     <div class="client-view">
-      <p data-en>Your client's users simply visit their protected URL. No friction. No confusing puzzles. The protection is invisible — until something suspicious happens.</p>
-      <p data-fr>Les utilisateurs de votre client visitent simplement leur URL protégée. Aucune friction. Aucune énigme confuse. La protection est invisible — jusqu'à ce que quelque chose de suspect se produise.</p>
+      <p data-en>End users simply visit the protected URL. No friction. No puzzles. The protection is completely invisible — until something suspicious is detected.</p>
+      <p data-fr>Les utilisateurs finaux visitent simplement l'URL protégée. Aucune friction. Aucune énigme. La protection est totalement invisible — jusqu'à ce qu'une suspicion soit détectée.</p>
       <div class="domain-demo">
         <span class="domain-part domain-secure">secure</span>
         <span class="domain-dot">.</span>
@@ -342,153 +243,47 @@
         <span class="domain-dot">.</span>
         <span class="domain-part domain-tld">com</span>
       </div>
-      <p><span class="pulse"></span><strong style="color: var(--green)" data-en>Active protection.</strong><strong style="color: var(--green)" data-fr>Protection active.</strong>
-        <span data-en> Every session scored. Every bot blocked. The legitimate users see nothing unusual — they just get in. The bots, scrapers, credential stuffers — they don't.</span>
-        <span data-fr> Chaque session analysée. Chaque bot bloqué. Les utilisateurs légitimes ne voient rien d'inhabituel — ils passent. Les bots, scrapers, attaquants — non.</span>
-      </p>
+      <p><span class="pulse"></span><strong style="color:var(--green)" data-en>Active protection.</strong><strong style="color:var(--green)" data-fr>Protection active.</strong><span data-en> Every session scored. Bots blocked silently. Legitimate users pass through without noticing a thing.</span><span data-fr> Chaque session scorée. Bots bloqués silencieusement. Les utilisateurs légitimes passent sans rien remarquer.</span></p>
     </div>
   </div>
-
-  <!-- WHAT IT BLOCKS -->
   <div class="animate d4">
     <div class="section-label" data-en>What Gets Blocked</div>
     <div class="section-label" data-fr>Ce Qui Est Bloqué</div>
     <div class="blocks-grid">
-      <div class="block-card">
-        <div class="icon">🤖</div>
-        <h4 data-en>AI Bots &amp; Scrapers</h4>
-        <h4 data-fr>Bots IA et Scrapers</h4>
-        <p data-en>Automated scripts that mimic human clicks but have no real cognitive response.</p>
-        <p data-fr>Scripts automatisés qui imitent les clics humains mais sans réponse cognitive réelle.</p>
-        <div class="blocked" data-en>BLOCKED AT EDGE</div>
-        <div class="blocked" data-fr>BLOQUÉ EN PÉRIPHÉRIE</div>
-      </div>
-      <div class="block-card">
-        <div class="icon">🔑</div>
-        <h4 data-en>Credential Stuffing</h4>
-        <h4 data-fr>Credential Stuffing</h4>
-        <p data-en>Mass login attempts using leaked username/password lists.</p>
-        <p data-fr>Tentatives de connexion massives avec des listes de logins/mots de passe volés.</p>
-        <div class="blocked" data-en>BLOCKED AT EDGE</div>
-        <div class="blocked" data-fr>BLOQUÉ EN PÉRIPHÉRIE</div>
-      </div>
-      <div class="block-card">
-        <div class="icon">♻️</div>
-        <h4 data-en>Session Replay</h4>
-        <h4 data-fr>Rejeu de Session</h4>
-        <p data-en>Re-using a captured valid session. Codes expire and are fingerprinted.</p>
-        <p data-fr>Réutilisation d'une session valide capturée. Les codes expirent et sont fingerprints.</p>
-        <div class="blocked" data-en>CRYPTOGRAPHICALLY IMPOSSIBLE</div>
-        <div class="blocked" data-fr>CRYPTOGRAPHIQUEMENT IMPOSSIBLE</div>
-      </div>
-      <div class="block-card">
-        <div class="icon">🎭</div>
-        <h4 data-en>AI Mimicry Attacks</h4>
-        <h4 data-fr>Attaques par Mimicry IA</h4>
-        <p data-en>Advanced AI trying to copy human behavioral patterns. 11 independent layers.</p>
-        <p data-fr>IA avancée tentant de copier les patterns humains. 11 couches de détection indépendantes.</p>
-        <div class="blocked" data-en>11-LAYER DETECTION</div>
-        <div class="blocked" data-fr>DÉTECTION 11 COUCHES</div>
-      </div>
-      <div class="block-card">
-        <div class="icon">💣</div>
-        <h4 data-en>DDoS / Flood</h4>
-        <h4 data-fr>DDoS / Flood</h4>
-        <p data-en>Mass request floods. BUNKER mode activates and locks down the domain.</p>
-        <p data-fr>Floods de requêtes massives. Le mode BUNKER s'active et verrouille le domaine.</p>
-        <div class="blocked" data-en>AUTO-LOCKDOWN</div>
-        <div class="blocked" data-fr>VERROUILLAGE AUTOMATIQUE</div>
-      </div>
-      <div class="block-card">
-        <div class="icon">🕵️</div>
-        <h4 data-en>Headless Browsers</h4>
-        <h4 data-fr>Navigateurs Headless</h4>
-        <p data-en>Selenium, Puppeteer, Playwright — profiled and blocked by the ML classifier.</p>
-        <p data-fr>Selenium, Puppeteer, Playwright — profilés et bloqués par le classifieur ML.</p>
-        <div class="blocked" data-en>ML CLASSIFIED</div>
-        <div class="blocked" data-fr>CLASSIFIÉ PAR ML</div>
-      </div>
+      <div class="block-card"><span class="icon">🤖</span><h4 data-en>AI Bots &amp; Scrapers</h4><h4 data-fr>Bots IA et Scrapers</h4><p data-en>Scripts mimicking human clicks with no real cognitive response.</p><p data-fr>Scripts imitant les clics humains sans réponse cognitive réelle.</p><div class="blocked" data-en>BLOCKED AT EDGE</div><div class="blocked" data-fr>BLOQUÉ EN PÉRIPHÉRIE</div></div>
+      <div class="block-card"><span class="icon">🔑</span><h4 data-en>Credential Stuffing</h4><h4 data-fr>Credential Stuffing</h4><p data-en>Mass login attempts using leaked username/password lists.</p><p data-fr>Tentatives de connexion massives avec des listes de logins/mots de passe volés.</p><div class="blocked" data-en>BLOCKED AT EDGE</div><div class="blocked" data-fr>BLOQUÉ EN PÉRIPHÉRIE</div></div>
+      <div class="block-card"><span class="icon">♻️</span><h4 data-en>Session Replay</h4><h4 data-fr>Rejeu de Session</h4><p data-en>Re-using a captured valid session. Codes expire and are fingerprinted.</p><p data-fr>Réutilisation d'une session capturée. Les codes expirent et sont fingerprints.</p><div class="blocked" data-en>CRYPTOGRAPHICALLY IMPOSSIBLE</div><div class="blocked" data-fr>CRYPTOGRAPHIQUEMENT IMPOSSIBLE</div></div>
+      <div class="block-card"><span class="icon">🎭</span><h4 data-en>AI Mimicry Attacks</h4><h4 data-fr>Attaques par Mimicry IA</h4><p data-en>Advanced AI trying to copy human behavioral patterns. 11 independent detection layers.</p><p data-fr>IA avancée copiant les patterns humains. 11 couches de détection indépendantes.</p><div class="blocked" data-en>11-LAYER DETECTION</div><div class="blocked" data-fr>DÉTECTION 11 COUCHES</div></div>
+      <div class="block-card"><span class="icon">💣</span><h4>DDoS / Flood</h4><p data-en>Mass request floods. BUNKER mode activates and locks the domain automatically.</p><p data-fr>Floods massifs. Le mode BUNKER verrouille le domaine automatiquement.</p><div class="blocked" data-en>AUTO-LOCKDOWN</div><div class="blocked" data-fr>VERROUILLAGE AUTO</div></div>
+      <div class="block-card"><span class="icon">🕵️</span><h4 data-en>Headless Browsers</h4><h4 data-fr>Navigateurs Headless</h4><p data-en>Selenium, Puppeteer, Playwright — profiled and blocked by the ML classifier.</p><p data-fr>Selenium, Puppeteer, Playwright — profilés et bloqués par le classifieur ML.</p><div class="blocked" data-en>ML CLASSIFIED</div><div class="blocked" data-fr>CLASSIFIÉ PAR ML</div></div>
     </div>
   </div>
-
-  <!-- SUMMARY -->
   <div class="animate d5">
-    <div class="section-label" data-en>Quick Reference for Client Conversations</div>
-    <div class="section-label" data-fr>Référence Rapide pour Vos Conversations Client</div>
+    <div class="section-label" data-en>Quick Reference</div>
+    <div class="section-label" data-fr>Référence Rapide</div>
     <div class="summary">
       <div class="summary-header">HCS-U7 — Key Facts</div>
-      <div class="summary-row">
-        <div class="summary-cell" data-en>Setup time</div>
-        <div class="summary-cell" data-fr>Temps de déploiement</div>
-        <div class="summary-cell ok" data-en>DNS record + widget embed — under 30 min</div>
-        <div class="summary-cell ok" data-fr>Enregistrement DNS + widget — moins de 30 min</div>
-      </div>
-      <div class="summary-row">
-        <div class="summary-cell" data-en>User friction</div>
-        <div class="summary-cell" data-fr>Friction utilisateur</div>
-        <div class="summary-cell ok" data-en>Minimal — 10 to 30 second cognitive check</div>
-        <div class="summary-cell ok" data-fr>Minimale — test cognitif de 10 à 30 secondes</div>
-      </div>
-      <div class="summary-row">
-        <div class="summary-cell" data-en>Each client gets</div>
-        <div class="summary-cell" data-fr>Chaque client reçoit</div>
-        <div class="summary-cell" data-en>Dedicated subdomain + isolated tenant environment</div>
-        <div class="summary-cell" data-fr>Sous-domaine dédié + environnement tenant isolé</div>
-      </div>
-      <div class="summary-row">
-        <div class="summary-cell" data-en>Verdict speed</div>
-        <div class="summary-cell" data-fr>Vitesse de verdict</div>
-        <div class="summary-cell ok" data-en>Under 1 millisecond</div>
-        <div class="summary-cell ok" data-fr>Moins d'1 milliseconde</div>
-      </div>
-      <div class="summary-row">
-        <div class="summary-cell" data-en>Bot detection layers</div>
-        <div class="summary-cell" data-fr>Couches de détection bots</div>
-        <div class="summary-cell" data-en>11 independent layers + ML classifier (43 signals)</div>
-        <div class="summary-cell" data-fr>11 couches indépendantes + classifieur ML (43 signaux)</div>
-      </div>
-      <div class="summary-row">
-        <div class="summary-cell" data-en>Cryptography</div>
-        <div class="summary-cell" data-fr>Cryptographie</div>
-        <div class="summary-cell" data-en>Post-quantum (NIST FIPS 203/204) — future-proof</div>
-        <div class="summary-cell" data-fr>Post-quantique (NIST FIPS 203/204) — prêt pour l'avenir</div>
-      </div>
-      <div class="summary-row">
-        <div class="summary-cell" data-en>Compliance</div>
-        <div class="summary-cell" data-fr>Conformité</div>
-        <div class="summary-cell ok" data-en>PSD2 SCA compatible · GDPR by design</div>
-        <div class="summary-cell ok" data-fr>Compatible PSD2 SCA · RGPD by design</div>
-      </div>
-      <div class="summary-row">
-        <div class="summary-cell" data-en>Red team results</div>
-        <div class="summary-cell" data-fr>Résultats Red Team</div>
-        <div class="summary-cell ok" data-en>44,125 attacks — 0 breaches in production</div>
-        <div class="summary-cell ok" data-fr>44 125 attaques — 0 brèche en production</div>
-      </div>
-      <div class="summary-row">
-        <div class="summary-cell" data-en>Patents</div>
-        <div class="summary-cell" data-fr>Brevets</div>
-        <div class="summary-cell" data-en>3 INPI patents filed (FR2514274 · FR2514546 · FR2515560)</div>
-        <div class="summary-cell" data-fr>3 brevets INPI déposés (FR2514274 · FR2514546 · FR2515560)</div>
-      </div>
+      <div class="summary-row"><div class="summary-cell" data-en>Setup time</div><div class="summary-cell" data-fr>Déploiement</div><div class="summary-cell ok" data-en>DNS + widget — under 30 min</div><div class="summary-cell ok" data-fr>DNS + widget — moins de 30 min</div></div>
+      <div class="summary-row"><div class="summary-cell" data-en>End user friction</div><div class="summary-cell" data-fr>Friction utilisateur</div><div class="summary-cell ok" data-en>Zero by default — cognitive check only on suspicion</div><div class="summary-cell ok" data-fr>Zéro par défaut — test cognitif uniquement sur suspicion</div></div>
+      <div class="summary-row"><div class="summary-cell" data-en>Each B2B client gets</div><div class="summary-cell" data-fr>Chaque client B2B reçoit</div><div class="summary-cell" data-en>Dedicated subdomain + isolated tenant</div><div class="summary-cell" data-fr>Sous-domaine dédié + tenant isolé</div></div>
+      <div class="summary-row"><div class="summary-cell" data-en>Verdict speed</div><div class="summary-cell" data-fr>Vitesse de verdict</div><div class="summary-cell ok" data-en>Under 1 millisecond</div><div class="summary-cell ok" data-fr>Moins d'1 milliseconde</div></div>
+      <div class="summary-row"><div class="summary-cell" data-en>Detection layers</div><div class="summary-cell" data-fr>Couches de détection</div><div class="summary-cell" data-en>11 layers + ML classifier (43 signals)</div><div class="summary-cell" data-fr>11 couches + classifieur ML (43 signaux)</div></div>
+      <div class="summary-row"><div class="summary-cell" data-en>Cryptography</div><div class="summary-cell" data-fr>Cryptographie</div><div class="summary-cell" data-en>Post-quantum NIST FIPS 203/204</div><div class="summary-cell" data-fr>Post-quantique NIST FIPS 203/204</div></div>
+      <div class="summary-row"><div class="summary-cell" data-en>Compliance</div><div class="summary-cell" data-fr>Conformité</div><div class="summary-cell ok" data-en>PSD2 SCA · GDPR by design</div><div class="summary-cell ok" data-fr>PSD2 SCA · RGPD by design</div></div>
+      <div class="summary-row"><div class="summary-cell" data-en>Red team results</div><div class="summary-cell" data-fr>Résultats Red Team</div><div class="summary-cell ok" data-en>44,125 attacks — 0 breaches</div><div class="summary-cell ok" data-fr>44 125 attaques — 0 brèche</div></div>
+      <div class="summary-row"><div class="summary-cell" data-en>Patents</div><div class="summary-cell" data-fr>Brevets</div><div class="summary-cell" data-en>3 INPI patents (FR2514274 · FR2514546 · FR2515560)</div><div class="summary-cell" data-fr>3 brevets INPI (FR2514274 · FR2514546 · FR2515560)</div></div>
     </div>
   </div>
-
-  <!-- CTA -->
   <div class="animate d6">
     <div class="cta">
       <h2 data-en>Ready to Onboard Your First Client?</h2>
       <h2 data-fr>Prêt à Intégrer Votre Premier Client ?</h2>
       <p data-en>Contact IA-SOLUTION to get your partner access, technical documentation, and integration support.</p>
       <p data-fr>Contactez IA-SOLUTION pour obtenir votre accès partenaire, la documentation technique et le support d'intégration.</p>
-      <a href="/cdn-cgi/l/email-protection#5635393822373522163f377b25393a23223f3938783024" class="cta-btn" data-en>Contact IA-SOLUTION →</a>
-      <a href="/cdn-cgi/l/email-protection#a5c6cacbd1c4c6d1e5ccc488d6cac9d0d1cccacb8bc3d7" class="cta-btn" data-fr>Contacter IA-SOLUTION →</a>
+      <a href="mailto:contact@ia-solution.fr" class="cta-btn" data-en>Contact IA-SOLUTION →</a>
+      <a href="mailto:contact@ia-solution.fr" class="cta-btn" data-fr>Contacter IA-SOLUTION →</a>
     </div>
   </div>
-
 </div>
-
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  function setLang(lang) {
-    document.body.className = 'lang-' + lang;
-    document.querySelecto
+</body>
+</html>
